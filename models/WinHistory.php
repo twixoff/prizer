@@ -67,4 +67,33 @@ class WinHistory extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
+
+    public function getPrizeTypeName(): string
+    {
+        $name = 'not set';
+        switch ($this->prize_type) {
+            case 'money': $name = 'Денежный приз'; break;
+            case 'bonus': $name = 'Бонусные баллы'; break;
+            case 'thing': $name = 'Вещевой приз'; break;
+        }
+
+        return $name;
+    }
+
+    public function getStatusName(): string
+    {
+        $status = 'not set';
+        switch ($this->status) {
+            case 0: $status = 'новый'; break;
+            case 1: $status = 'отказ'; break;
+            case 2: $status = 'заказан вывод'; break;
+            case 3: $status = 'отправлен в банк'; break;
+            case 4: $status = 'конвертация в баллы'; break;
+            case 5: $status = 'зачислен на личный счет'; break;
+            case 6: $status = 'посылка отправлена'; break;
+            case 7: $status = 'посылка получена'; break;
+        }
+
+        return $status;
+    }
 }

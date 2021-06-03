@@ -3,11 +3,12 @@
 namespace app\controllers;
 
 use Yii;
-use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
+use yii\web\Controller;
 use app\models\LoginForm;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use app\models\WinHistorySearch;
 use app\services\prizer\PrizerService;
 
 class SiteController extends Controller
@@ -31,7 +32,8 @@ class SiteController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['get-prize', 'post'],
+                    'logout' => ['post'],
+                    'get-prize' => ['post'],
                 ],
             ],
         ];
@@ -56,7 +58,15 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+
+        $searchModel = new WinHistorySearch();
+        $searchModel->user_id = Yii::$app->user->id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
 

@@ -14,6 +14,7 @@ use yii\web\IdentityInterface;
  * @property string $password_hash
  * @property string $auth_key
  * @property int|null $status
+ * @property float|null $bonus
  * @property int $created_at
  * @property int $updated_at
  */
@@ -48,6 +49,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             [['username', 'password_hash', 'auth_key'], 'required'],
             [['status', 'created_at', 'updated_at'], 'integer'],
+            [['bonus'], 'number'],
             [['username'], 'string', 'max' => 50],
             [['password_hash', 'auth_key'], 'string', 'max' => 255],
             [['username'], 'unique'],
@@ -65,6 +67,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'password_hash' => 'Password Hash',
             'auth_key' => 'Auth Key',
             'status' => 'Status',
+            'bonus' => 'Bonus',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

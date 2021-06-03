@@ -18,12 +18,23 @@ class MoneyPrize extends BasePrize
     /**
      * Convert money to point.
      */
-    public function convertToBonus(): void
-    {}
+    public function convertToBonus($amount): float
+    {
+        return $amount * static::RATE;
+    }
 
     /**
      * Send money to user card or bank account.
+     *
+     * @amount int amount to send
+     * @param $bankAccount string bank account to send money
+     * @return bool
      */
-    public function sendToBank(): void
-    {}
+    public function sendToBank($amount, $bankAccount): bool
+    {
+        // TODO:: sending request to bank API over HTTP
+        // TODO:: using $amount and $bankAccount params
+
+        return true;
+    }
 }
