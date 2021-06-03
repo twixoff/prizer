@@ -8,7 +8,7 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
-use app\models\ContactForm;
+use app\services\prizer\PrizerService;
 
 class SiteController extends Controller
 {
@@ -20,10 +20,9 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only' => ['index', 'get-prize', 'logout'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -32,7 +31,7 @@ class SiteController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post'],
+                    'logout' => ['get-prize', 'post'],
                 ],
             ],
         ];
@@ -47,21 +46,36 @@ class SiteController extends Controller
             'error' => [
                 'class' => 'yii\web\ErrorAction',
             ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
         ];
     }
 
     /**
-     * Displays homepage.
+     * Displays user homepage.
      *
      * @return string
      */
     public function actionIndex()
     {
         return $this->render('index');
+    }
+
+
+    /**
+     * Get prize.
+     *
+     * @return string
+     */
+    public function actionGetPrize()
+    {
+        Yii::$app->set('prizer', new PrizerService(Yii::$app->user->id));
+        try {
+            $prize = Yii::$app->prizer->getPrize();
+            Yii::$app->session->setFlash('prize-success', $prize);
+        } catch (\Exception $e) {
+            Yii::$app->session->setFlash('prize-fail', $e->getMessage());
+        }
+
+        return $this->redirect('index');
     }
 
     /**
@@ -98,31 +112,4 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
 }
